@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:news_app/BookmarkPage.dart';
 import 'package:news_app/db_test.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -197,7 +198,30 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               ],
             ),
           ),
-          drawer: Drawer(),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Text('Drawer Header'),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                ),
+                ListTile(
+                  title: Text('Bookmarks'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BookmarkPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
       );
     } else {

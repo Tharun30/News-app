@@ -26,23 +26,12 @@ class DbManager {
     );
   }
 
-  Future<List<Bookmark>> bookmarks(Database database) async {
+  Future<List> bookmarks(Database database) async {
     final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('bookmarks');
-    return List.generate(maps.length, (i) {
-      return Bookmark(
-        id: maps[i]['id'],
-        image: maps[i]['image'],
-        date: maps[i]['date'],
-      );
-    });
+    var result = await db.rawQuery("SELECT * FROM bookmarks");
+    return result.toList();
   }
 
-  // var fido = Bookmark(
-  //   id: 0,
-  //   image: 'Fido',
-  //   date: 'sdgs',
-  // );
   // await insertDog(fido);
   // print(await bookmarks());
 
@@ -61,10 +50,5 @@ class Bookmark {
       'image': image,
       'date': date,
     };
-  }
-
-  @override
-  String toString() {
-    return 'Dog{id: $id, name: $image, age: $date}';
   }
 }
