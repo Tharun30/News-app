@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:news_app/cache.dart';
+import 'cache.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:news_app/home.dart';
 import 'package:dio/dio.dart';
@@ -32,36 +33,21 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   var check;
   var loading;
   late AnimationController controller;
+
   fetchdata(int num) async {
     setState(() {
       loading = false;
     });
-    String filename = 'CacheData.json';
-    var cacheDir = await getTemporaryDirectory();
-    print(cacheDir);
-    if (await File(cacheDir.path + "/" + filename).exists()) {
-      print("Loading from cache");
-      var jsonData = File(cacheDir.path + "/" + filename).readAsStringSync();
-      final response = jsonDecode(jsonData);
-      return response;
+    final response = await Dio().get(
+        'https://wcreu.com/index.php/wp-json/wp/v2/posts?per_page=20&categories=$num&status=publish');
+    if (response.statusCode == 200) {
+      setState(() async {
+        futureAlbum = response.data;
+        loading = true;
+        return jsonDecode(response.data);
+      });
     } else {
-      print("Loading from API");
-      final response = await Dio().get(
-          'https://wcreu.com/index.php/wp-json/wp/v2/posts?per_page=20&categories=$num&status=publish');
-
-      if (response.statusCode == 200) {
-        setState(() async {
-          futureAlbum = response.data;
-          loading = true;
-          var tempDir = await getTemporaryDirectory();
-          print(tempDir);
-          File file = new File(tempDir.path + "/" + filename);
-          file.writeAsString(futureAlbum, flush: true, mode: FileMode.write);
-          return jsonDecode(response.data);
-        });
-      } else {
-        throw Exception('Failed to load album');
-      }
+      throw Exception('Failed to load album');
     }
   }
 
@@ -182,8 +168,9 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                         child: Padding(
                           padding: EdgeInsets.all(10),
                           child: ListTile(
-                            title: Image.network(futureAlbum[index]
-                                ['jetpack_featured_media_url']),
+                            title: CachedNetworkImage(
+                                imageUrl: futureAlbum[index]
+                                    ['jetpack_featured_media_url']),
                             subtitle: Text(futureAlbum[index]['date']),
                             trailing: FlatButton(
                               child: Text('-->'),
