@@ -34,7 +34,15 @@ class DbManager {
 
   // await insertDog(fido);
   // print(await bookmarks());
+  Future<void> deleteBM(Database database, int id) async {
+    final db = await database;
 
+    await db.delete(
+      'bookmarks',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
 }
 
 class Bookmark {

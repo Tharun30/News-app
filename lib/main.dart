@@ -10,11 +10,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'DataPage.dart';
-import 'cache.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:news_app/home.dart';
+
 import 'package:dio/dio.dart';
-import 'user.dart';
 
 void main() {
   runApp(MaterialApp(

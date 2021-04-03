@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:news_app/db_test.dart';
 
 class Datapage extends StatefulWidget {
   var futurealbum;
 
-  Datapage(@required this.futurealbum);
+  Datapage(this.futurealbum);
 
   @override
   _DatapageState createState() => _DatapageState();
@@ -33,8 +34,6 @@ class _DatapageState extends State<Datapage> {
               color: Colors.black,
             ),
             onPressed: () async {
-              print('Hi bookmark');
-
               database = await DbManager().main2();
               await DbManager().insertbookmark(
                   database,
@@ -43,6 +42,11 @@ class _DatapageState extends State<Datapage> {
                     image: widget.futurealbum['jetpack_featured_media_url'],
                     date: widget.futurealbum['date'].toString(),
                   ));
+              Fluttertoast.showToast(
+                msg: "Added to Bookmarks",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+              );
             },
           )
         ],
