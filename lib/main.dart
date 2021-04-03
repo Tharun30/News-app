@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:news_app/db_test.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'DataPage.dart';
 import 'cache.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:news_app/home.dart';
@@ -60,6 +63,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         setState(() {});
       });
     controller.repeat(reverse: true);
+
     super.initState();
 
     futureAlbum = fetchdata(6);
@@ -206,63 +210,5 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         ),
       );
     }
-  }
-}
-
-class Datapage extends StatelessWidget {
-  var futurealbum;
-  Datapage(@required this.futurealbum);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text('Data Page', style: TextStyle(color: Colors.black)),
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Text(
-              futurealbum['id'].toString(),
-              style: TextStyle(
-                fontSize: 25,
-              ),
-            ),
-            Image.network(
-              futurealbum['jetpack_featured_media_url'],
-              height: 350,
-              width: 200,
-            ),
-            Text(
-              futurealbum['date'].toString(),
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              futurealbum['status'].toString(),
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              futurealbum['title']['rendered'].toString(),
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              futurealbum.length.toString(),
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
