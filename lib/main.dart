@@ -1,18 +1,13 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:news_app/BookmarkPage.dart';
-import 'package:news_app/db_test.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'DataPage.dart';
-import 'package:path_provider/path_provider.dart';
-
+import 'package:share/share.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
+import 'db_test.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -34,8 +29,11 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   late var futureAlbum;
   var check;
   var loading;
+  var db;
+  var id;
+  late List bookmarkid = [];
   late AnimationController controller;
-
+  static GlobalKey _globalKey = GlobalKey();
   fetchdata(int num) async {
     setState(() {
       loading = false;
@@ -53,6 +51,14 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     }
   }
 
+  fetchids() async {
+    db = await DbManager().main2();
+    id = await DbManager().bookmarksids(db);
+    for (int i = 0; i < id.length; i++) {
+      bookmarkid.add(id[i]['id']);
+    }
+  }
+
   @override
   void initState() {
     controller = AnimationController(
@@ -66,6 +72,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     super.initState();
 
     futureAlbum = fetchdata(6);
+    fetchids();
   }
 
   @override
@@ -88,10 +95,17 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                   Icons.search,
                   color: Colors.black,
                 ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.share,
+                  color: Colors.black,
+                ),
                 onPressed: () {
-                  // do something
+                  Share.share("Ignore This is from news app");
                 },
-              )
+              ),
             ],
           ),
           body: SafeArea(
@@ -174,7 +188,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                             title: CachedNetworkImage(
                                 imageUrl: futureAlbum[index]
                                     ['jetpack_featured_media_url']),
-                            subtitle: Text(futureAlbum[index]['date']),
+                            subtitle:
+                                Text(futureAlbum[index]['date'].toString()),
                             trailing: FlatButton(
                               child: Text('-->'),
                               color: Colors.blueAccent,
@@ -183,8 +198,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            Datapage(futureAlbum[index])));
+                                        builder: (context) => Datapage(
+                                            futureAlbum[index], bookmarkid)));
                               },
                             ),
                           ),

@@ -29,7 +29,13 @@ class DbManager {
   Future<List> bookmarks(Database database) async {
     final Database db = await database;
     var result = await db.rawQuery("SELECT * FROM bookmarks");
-    return result.toList();
+    return result.reversed.toList();
+  }
+
+  Future<List> bookmarksids(Database database) async {
+    final Database db = await database;
+    var result = await db.rawQuery("SELECT id FROM bookmarks");
+    return result.reversed.toList();
   }
 
   // await insertDog(fido);

@@ -5,8 +5,8 @@ import 'package:news_app/db_test.dart';
 
 class Datapage extends StatefulWidget {
   var futurealbum;
-
-  Datapage(this.futurealbum);
+  late List bookmarkid;
+  Datapage(this.futurealbum, this.bookmarkid);
 
   @override
   _DatapageState createState() => _DatapageState();
@@ -14,11 +14,7 @@ class Datapage extends StatefulWidget {
 
 class _DatapageState extends State<Datapage> {
   var database;
-  var fido = Bookmark(
-    id: 0,
-    image: 'Fido',
-    date: 'sdgs',
-  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,27 +24,45 @@ class _DatapageState extends State<Datapage> {
         elevation: 0,
         backgroundColor: Colors.white,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.bookmark,
-              color: Colors.black,
-            ),
-            onPressed: () async {
-              database = await DbManager().main2();
-              await DbManager().insertbookmark(
-                  database,
-                  Bookmark(
-                    id: widget.futurealbum['id'],
-                    image: widget.futurealbum['jetpack_featured_media_url'],
-                    date: widget.futurealbum['date'].toString(),
-                  ));
-              Fluttertoast.showToast(
-                msg: "Added to Bookmarks",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-              );
-            },
-          )
+          widget.bookmarkid.contains(widget.futurealbum['id'])
+              ? IconButton(
+                  icon: Icon(Icons.bookmark),
+                  onPressed: () async {
+                    print('item exists delete item');
+                    widget.bookmarkid.remove(widget.futurealbum['id']);
+                    database = await DbManager().main2();
+                    await DbManager()
+                        .deleteBM(database, widget.futurealbum['id']);
+                    Fluttertoast.showToast(
+                      msg: "Removed From Bookmarks",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                    );
+                  },
+                )
+              : IconButton(
+                  icon: Icon(
+                    Icons.bookmark_border,
+                    color: Colors.black,
+                  ),
+                  onPressed: () async {
+                    widget.bookmarkid.add(widget.futurealbum['id']);
+                    database = await DbManager().main2();
+                    await DbManager().insertbookmark(
+                        database,
+                        Bookmark(
+                          id: widget.futurealbum['id'],
+                          image:
+                              widget.futurealbum['jetpack_featured_media_url'],
+                          date: widget.futurealbum['date'].toString(),
+                        ));
+                    Fluttertoast.showToast(
+                      msg: "Added to Bookmarks",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                    );
+                  },
+                )
         ],
       ),
       body: Center(
